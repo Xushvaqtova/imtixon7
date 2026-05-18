@@ -8,7 +8,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="Recipe Management API",
     version="1.0.0",
-    description="Imtihon uchun tayyorlangan mukammal Retseptlar API platformasi"
+    description="Imtihon uchun rmasi"
 )
 
 app.include_router(auth.router)
