@@ -1,10 +1,20 @@
 from fastapi import FastAPI
 from .database import Base, engine
-from .routers import user, recipe
+from .routers import auth, recipe
 
+# Bazada jadvallarni yaratish (Agar Alembic ishlatilmasa zaxira sifatida)
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
 
-app.include_router(user.router)
+app = FastAPI(
+    title="Recipe Management API",
+    version="1.0.0",
+    description="Imtihon uchun tayyorlangan mukammal Retseptlar API platformasi"
+)
+
+app.include_router(auth.router)
 app.include_router(recipe.router)
+
+@app.get("/")
+def root():
+    return {"status": "Recipe API muvaffaqiyatli ishlamoqda!"}

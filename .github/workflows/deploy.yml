@@ -1,23 +1,29 @@
-name: Deploy
+name: CI/CD Recipe API Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Kodni yuklab olish
+      uses: actions/checkout@v3
 
-    - name: SSH Deploy
+    - name: AWS EC2 serverga ulanish va Deploy qilish
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.HOST }}
+        host: ${{ secrets.EC2_HOST }}
         username: ubuntu
-        key: ${{ secrets.SSH_KEY }}
+        key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          cd recipe_api
-          git pull
-          docker-compose up -d --build
+          cd /home/ubuntu/recipe_api || git clone https://github.com/${{ github.repository }}.git /home/ubuntu/recipe_api
+          cd /home/ubuntu/recipe_api
+          git pull origin main
+          docker stop recipe_container || true
+          docker rm recipe_container || true
+          docker build -t recipe_api_image .
+          docker run -d --name recipe_container -p 80:8000 --env DATABASE_URL="${{ secrets.DB_URL }}" recipe_api_image
