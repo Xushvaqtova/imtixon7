@@ -23,7 +23,7 @@ class UserOut(BaseModel):
     class Config:
         from_attributes = True
 
-# Recipe sxemalari
+
 class RecipeBase(BaseModel):
     title: str
     description: Optional[str] = None
